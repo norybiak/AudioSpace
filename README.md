@@ -5,7 +5,7 @@ A tool for setting up and managing spatialized audio for Altspace developer apps
 Example: http://norybiak.com/apps/sound
 Note: The example works best in the SDK Test (Large) space.
 
----
+
 ## Using AudioSpace
 
 Before adding sounds, you must first start AudioSpace:
