@@ -18,6 +18,13 @@ To add a new sound:
 AudioSpace.newSpatialSound("uniqueName", "path/to/file.ogg", config).then(function(name) { //Ready to play a sound! });
 ```
 
+To play a sound (only when it's ready):
+```javascript
+AudioSpace.play("name"); // play the sound once
+or
+AudioSpace.play("name", true); // loop the sound (fire and forget)
+```
+
 You must also update AudioSpace in your render loop while passing the user's head object:
 ```javacsript 
 AudioSpace.update(userHead);
