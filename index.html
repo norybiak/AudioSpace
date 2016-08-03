@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang=en>
+	<head>
+		<meta charset=utf-8>
+		<title>AudioSpace Example</title>
+		<script src="http://sdk.altvr.com/libs/three.js/r73/build/three.js"></script>
+		<script src="http://sdk.altvr.com/libs/altspace.js/0.16.0/altspace.min.js"></script>
+
+		<script type="text/javascript" src="/apps/tools/AudioSpace.js"></script>
+		
+	</head>
+	<body>
+		<script>
+		
+		var Sound = (function() 
+		{
+			var scene = new THREE.Scene();
+			var renderer = altspace.getThreeJSRenderer();
+			
+			var userHead;
+			
+			var mesh1, mesh2, mesh3, mesh4;
+			
+			/*
+				config options: (order doesn't matter)
+				
+					config.mesh 				Type: THREE.Mesh - The mesh you want the sound to originate from (this overrides pos)
+					config.pos					Type: Object | Format {x: 0, y: 0, z: 0} - The custom position you want the sound to originate from	(mesh must be left out to use pos)
+				
+					config.soundZone			Type: int (0-360) - The zone around the object where the sound is played (in degrees)
+													Think of the zone as a cone that expands outward in the direction the the object is facing. The smaller the degree,
+													the smaller the cone is. 360 degrees wraps around the entire object (default)
+													***NOTE: This setting will always override to 360 degrees until it can be fully implemented***
+				
+					config.distanceModel		Type: string - 'linear', 'inverse', 'exponential' - default is linear (recommended)
+					config.fadeFactor			Type: double (0-1) - How fast the volume decreases as a user moves away from the object (default is 1)
+					config.refDistance			Type: double (0-1) - I'm not exactly sure what this does (default is 1)
+					config.maxDistance			Type: double (0-10000) - The maximum distance between the object and user, after which the volume is not reduced anymore (default is 200)
+					config.volume				Type: double (0-100) - The volume of the sound (default is 1)
+					config.usingOwnerTools		Type: bool - If the mesh is using OwnerTools, this must be set to true (default is false)
+			*/
+
+			function initSounds()
+			{
+				var config;
+				config = {mesh: mesh1, volume: 10};
+				AudioSpace.newSpatialSound("fireworks", "0831.ogg", config).then(function(name) 
+				{ 
+					AudioSpace.play(name, true); 
+				});
+				
+				config = {mesh: mesh2, volume: 10};
+				AudioSpace.newSpatialSound("horn", "0679.ogg", config).then(function(name)
+				{
+				
+					// press the orange square to play the horn sound that's attached to the red square
+					mesh4.addEventListener('cursordown', function (event) 
+					{
+						AudioSpace.play(name);
+					});
+					
+				});
+
+				// Inline config
+				AudioSpace.newSpatialSound("ocean", "0267.ogg", {mesh: mesh3, volume: 5}).then(function(name) 
+				{ 
+					AudioSpace.play(name, true); 
+				});
+				
+				// The position is custom set and not attached to an object. This could be used for ambience.
+				AudioSpace.newSpatialSound("storm", "0124.ogg", {pos: {x: 0, y: -200, z: 0}, volume: 1, maxDistance: 300}).then(function(name) 
+				{ 
+					AudioSpace.play(name, true); 
+				});
+			}
+
+			function start()
+			{
+				var geometry;
+
+				geometry = new THREE.BoxGeometry(3, 3, 3);		
+				mesh1 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:'#00ff00'}));	
+				mesh1.scale.set(10, 10, 10);
+				mesh1.position.set(55, -450, 390);
+				scene.add(mesh1);
+				
+				geometry = new THREE.BoxGeometry(3, 3, 3);		
+				mesh2 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:'#ff0000'}));	
+				mesh2.scale.set(10, 10, 10);
+				mesh2.position.set(170, -460, 10);
+				scene.add(mesh2);
+				
+				geometry = new THREE.BoxGeometry(3, 3, 3);		
+				mesh3 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:'#0050ff'}));	
+				mesh3.scale.set(10, 10, 10);
+				mesh3.position.set(20, -450, -400);
+				scene.add(mesh3);
+		
+				geometry = new THREE.BoxGeometry(3, 3, 3);		
+				mesh4 = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color:'#ffc700'}));
+				mesh4.scale.set(10, 10, 10);
+				mesh4.position.set(0, -400, 0);
+				scene.add(mesh4);
+				
+				
+				altspace.getThreeJSTrackingSkeleton().then(function(skeleton)
+				{
+					scene.add(skeleton);
+					userHead = skeleton.getJoint('Head'); 
+					
+					// Start AudioSpace
+					AudioSpace.start();
+					
+					// Setup the sounds
+					initSounds();
+					
+					// Start the loop
+					animate();
+				});
+			}
+			
+			function animate() 
+			{
+				requestAnimationFrame(animate);
+				renderer.render(scene);
+				
+				// Updates the listener position, skeleton head must be passed to update 
+				AudioSpace.update(userHead);			
+			}
+			
+			return { start: start };
+		}());
+		
+		Sound.start();
+		
+		</script>
+	</body>
+</html>
