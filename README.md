@@ -1,3 +1,5 @@
+## MAJOR UPDATE INCOMING. IT'S NOT RECOMMENDED TO USE THIS VERSION.
+
 # AudioSpace
 A tool for setting up and managing spatialized audio for Altspace developer apps.
 
