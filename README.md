@@ -1,4 +1,4 @@
-## MAJOR UPDATE INCOMING. IT'S NOT RECOMMENDED TO USE THIS VERSION.
+## This project has been deprecated as Altspace implemented native spatial audio support via n-sound.
 
 # AudioSpace
 A tool for setting up and managing spatialized audio for Altspace developer apps.
